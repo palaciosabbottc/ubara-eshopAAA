@@ -31,7 +31,7 @@ export default function NosotrosPage() {
                   </div>
                   <div className="order-first md:order-last">
                     <Image
-                      src="/images/crafting.png"
+                      src="/placeholder.svg?height=400&width=500&text=Historia"
                       alt="Proceso de creación"
                       width={500}
                       height={400}
