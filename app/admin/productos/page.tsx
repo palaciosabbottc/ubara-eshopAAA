@@ -75,49 +75,49 @@ export default function AdminProductsPage() {
             {filteredProducts.map((product) => (
               <Card key={product.id}>
                 <CardContent className="p-4">
-                  <div className="flex items-start space-x-4">
-                    <div className="flex items-center space-x-4">
-                      <div className="h-12 w-12 relative flex-shrink-0">
-                        <Image
-                          src={product.images[0] || "/placeholder.svg"}
-                          alt={product.name}
-                          fill
-                          className="object-cover rounded"
-                        />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center justify-between">
+                  <div className="flex flex-col space-y-4">
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center space-x-4">
+                        <div className="h-12 w-12 relative flex-shrink-0">
+                          <Image
+                            src={product.images[0] || "/placeholder.svg"}
+                            alt={product.name}
+                            fill
+                            className="object-cover rounded"
+                          />
+                        </div>
+                        <div className="min-w-0">
                           <h3 className="text-sm font-medium text-gray-900 truncate">{product.name}</h3>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleToggleFeatured(product.id, product.featured)}
-                            className={product.featured ? "text-yellow-500" : "text-gray-400"}
-                          >
-                            <Star className="h-4 w-4" />
-                          </Button>
-                        </div>
-                        <p className="mt-1 text-sm text-gray-500 truncate">{product.category}</p>
-                        <p className="mt-1 text-sm font-medium">${product.price.toFixed(2)}</p>
-                        <p className="mt-1 text-sm text-gray-500">Stock: {product.stock}</p>
-                        <div className="mt-2 flex space-x-2">
-                          <Link href={`/admin/productos/editar/${product.id}`}>
-                            <Button variant="outline" size="sm" className="flex items-center">
-                              <Pencil className="h-3 w-3 mr-1" />
-                              Editar
-                            </Button>
-                          </Link>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleDeleteClick(product.id)}
-                            className="flex items-center text-red-600 hover:text-red-700"
-                          >
-                            <Trash2 className="h-3 w-3 mr-1" />
-                            Eliminar
-                          </Button>
+                          <p className="mt-1 text-sm text-gray-500 truncate">{product.category}</p>
+                          <p className="mt-1 text-sm font-medium">${product.price.toFixed(2)}</p>
+                          <p className="mt-1 text-sm text-gray-500">Stock: {product.stock}</p>
                         </div>
                       </div>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleToggleFeatured(product.id, product.featured)}
+                        className={product.featured ? "text-yellow-500" : "text-gray-400"}
+                      >
+                        <Star className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    <div className="flex space-x-2">
+                      <Link href={`/admin/productos/editar/${product.id}`} className="flex-1">
+                        <Button variant="outline" size="sm" className="w-full">
+                          <Pencil className="h-3 w-3 mr-1" />
+                          Editar
+                        </Button>
+                      </Link>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleDeleteClick(product.id)}
+                        className="flex-1 text-red-600 hover:text-red-700"
+                      >
+                        <Trash2 className="h-3 w-3 mr-1" />
+                        Eliminar
+                      </Button>
                     </div>
                   </div>
                 </CardContent>
