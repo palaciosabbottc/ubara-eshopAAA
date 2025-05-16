@@ -5,17 +5,19 @@ import Image from "next/image"
 import Link from "next/link"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
-import { ProductGrid } from "@/components/product-grid"
+import { ProductCarousel } from "@/components/product-carousel"
 import { Button } from "@/components/ui/button"
 import { supabase } from "@/lib/supabase"
-import type { Collection } from "@/lib/types"
+import type { Collection, Product } from "@/lib/types"
 
 export default function Home() {
   const [collections, setCollections] = useState<Collection[]>([])
   const [loading, setLoading] = useState(true)
+  const [products, setProducts] = useState<Product[]>([])
 
   useEffect(() => {
     loadCollections()
+    loadFeaturedProducts()
   }, [])
 
   const loadCollections = async () => {
@@ -34,6 +36,22 @@ export default function Home() {
     setLoading(false)
   }
 
+  const loadFeaturedProducts = async () => {
+    const { data, error } = await supabase
+      .from('products')
+      .select('*')
+      .eq('featured', true)
+      .order('created_at', { ascending: false })
+      .limit(8)
+
+    if (error) {
+      console.error('Error loading featured products:', error)
+      return
+    }
+
+    setProducts(data || [])
+  }
+
   return (
     <main className="min-h-screen flex flex-col">
       {/* Hero Section */}
@@ -42,7 +60,7 @@ export default function Home() {
         <div className="absolute inset-0">
           <Image
             src="/images/hero-new.png"
-            alt="Cerámica Ubara"
+            alt="Cuadros Ubara"
             fill
             className="object-cover"
             priority
@@ -60,7 +78,7 @@ export default function Home() {
               <h1 className="text-xl font-normal mb-0">nueva</h1>
               <h1 className="text-xl font-normal">colección</h1>
             </div>
-            <p className="text-sm text-muted-foreground mb-4">cerámica</p>
+            <p className="text-sm text-muted-foreground mb-4">cuadros</p>
             <Link href="/tienda">
               <span className="inline-block font-bold text-black hover:opacity-70 transition-opacity border-b border-black pb-1">
                 shop
@@ -75,7 +93,7 @@ export default function Home() {
         <section className="w-full py-24 bg-white">
           <div className="container px-4 md:px-6">
             <div className="max-w-2xl mx-auto text-center mb-24">
-            <p className="text-base text-gray-600">
+              <p className="text-base text-gray-600">
                 ubara es el arte de la búsqueda de la
                 <br />
                 belleza en la imperfección
@@ -89,7 +107,12 @@ export default function Home() {
               <h2 className="text-lg font-medium mb-6">
                 nueva colección
               </h2>
-              <ProductGrid category="featured" limit={4} showAddToCart={true} />
+              <ProductCarousel 
+                products={products}
+                showAddToCart={true}
+                itemsPerView={4}
+                autoplayDelay={5000}
+              />
             </div>
           </div>
         </section>
