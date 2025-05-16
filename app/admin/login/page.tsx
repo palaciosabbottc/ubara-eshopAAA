@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { useAdmin } from "@/components/admin-provider"
@@ -20,11 +20,11 @@ export default function AdminLoginPage() {
   const { login, isAuthenticated } = useAdmin()
   const router = useRouter()
 
-  // If already authenticated, redirect to admin dashboard
-  if (isAuthenticated) {
-    router.push("/admin")
-    return null
-  }
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push("/admin")
+    }
+  }, [isAuthenticated, router])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -43,6 +43,11 @@ export default function AdminLoginPage() {
     } finally {
       setIsLoading(false)
     }
+  }
+
+  // Si está autenticado, no renderizamos nada mientras se realiza la redirección
+  if (isAuthenticated) {
+    return null
   }
 
   return (
@@ -79,6 +84,7 @@ export default function AdminLoginPage() {
                 placeholder="admin@example.com"
               />
             </div>
+            
             <div>
               <Label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
                 Contraseña
