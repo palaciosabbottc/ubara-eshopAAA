@@ -26,9 +26,6 @@ export function Footer() {
               <li>
                 <Link href="/contacto">contacto</Link>
               </li>
-              <li>
-                <Link href="/faq">faq</Link>
-              </li>
             </ul>
           </div>
 
@@ -110,9 +107,6 @@ export function Footer() {
                 <a href={`tel:${config.contact_phone}`}>{config.contact_phone}</a>
               </li>
               <li>{config.address}</li>
-              {config.business_hours.split('\n').map((line, index) => (
-                <li key={index}>{line}</li>
-              ))}
             </ul>
           </div>
         </div>

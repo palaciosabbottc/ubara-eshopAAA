@@ -55,7 +55,10 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                 </div>
                 <nav className="mt-5 flex-1 px-2 bg-white space-y-1">
                   {navigation.map((item) => {
-                    const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`)
+                    const isActive = 
+                      item.href === "/admin" 
+                        ? pathname === "/admin"
+                        : pathname.startsWith(item.href)
                     return (
                       <Link
                         key={item.name}

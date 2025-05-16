@@ -9,7 +9,7 @@ import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import { useCart } from "@/components/cart-provider"
-import { ShoppingBag } from "lucide-react"
+import { ShoppingBag, Minus, Plus } from "lucide-react"
 import { useCartAnimation } from "@/hooks/use-cart-animation"
 import { formatPrice } from "@/lib/format"
 import { incrementProductViews } from "@/lib/metrics-supabase"
@@ -22,6 +22,7 @@ export default function ProductPage() {
   const [product, setProduct] = useState<Product | null>(null)
   const [loading, setLoading] = useState(true)
   const [quantity, setQuantity] = useState(1)
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0)
   const { addToCart } = useCart()
   const addToCartButtonRef = useRef<HTMLButtonElement>(null)
 
@@ -91,7 +92,7 @@ export default function ProductPage() {
       id: product.id,
       name: product.name,
       price: product.price,
-      image: product.images[0] || "/placeholder.svg",
+      image: product.images[selectedImageIndex] || "/placeholder.svg",
       quantity,
     })
 
@@ -102,58 +103,82 @@ export default function ProductPage() {
   return (
     <main className="min-h-screen flex flex-col">
       <Header />
-
-      <div className="flex-1 pt-24 py-12">
+      <div className="flex-1 pt-24 pb-12">
         <div className="container px-4 md:px-6">
           <div className="max-w-5xl mx-auto">
-            <div className="grid md:grid-cols-2 gap-12">
-              <div>
-                <Image
-                  src={product.images[0] || "/placeholder.svg"}
-                  alt={product.name}
-                  width={600}
-                  height={600}
-                  className="w-full h-auto object-cover"
-                />
+            <div className="grid md:grid-cols-2 gap-8">
+              {/* Image Gallery */}
+              <div className="space-y-4">
+                <div className="aspect-square relative bg-gray-100 rounded-lg overflow-hidden">
+                  <Image
+                    src={product?.images[selectedImageIndex] || "/placeholder.svg"}
+                    alt={product?.name || ""}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+                {product?.images.length > 1 && (
+                  <div className="grid grid-cols-5 gap-2">
+                    {product.images.map((image, index) => (
+                      <div
+                        key={index}
+                        className={`aspect-square relative bg-gray-100 rounded-md overflow-hidden cursor-pointer ${
+                          selectedImageIndex === index ? "ring-2 ring-black" : ""
+                        }`}
+                        onClick={() => setSelectedImageIndex(index)}
+                      >
+                        <Image
+                          src={image}
+                          alt={`${product.name} - Imagen ${index + 1}`}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
-              <div className="flex flex-col">
-                <h1 className="text-xl font-medium mb-2">{product.name}</h1>
-                <p className="text-lg mb-6">{formatPrice(product.price)}</p>
-                <p className="text-muted-foreground mb-8">{product.description}</p>
 
-                <div className="flex items-center gap-4 mb-6">
+              {/* Product Info */}
+              <div>
+                <h1 className="text-2xl font-medium mb-4">{product?.name}</h1>
+                <p className="text-lg font-medium mb-4">{formatPrice(product?.price || 0)}</p>
+                <p className="text-muted-foreground mb-6">{product?.description}</p>
+
+                <div className="flex items-center space-x-4 mb-6">
+                  <div className="flex items-center border border-gray-200">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 rounded-none"
+                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                    >
+                      <Minus className="h-4 w-4" />
+                    </Button>
+                    <span className="w-12 text-center">{quantity}</span>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 rounded-none"
+                      onClick={() => setQuantity(quantity + 1)}
+                    >
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                  </div>
                   <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
-                    className="rounded-none border-black text-black"
+                    ref={addToCartButtonRef}
+                    onClick={handleAddToCart}
+                    className="flex-1"
                   >
-                    -
-                  </Button>
-                  <span>{quantity}</span>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => setQuantity((prev) => prev + 1)}
-                    className="rounded-none border-black text-black"
-                  >
-                    +
+                    <ShoppingBag className="h-4 w-4 mr-2" />
+                    Agregar al carrito
                   </Button>
                 </div>
-
-                <Button
-                  ref={addToCartButtonRef}
-                  onClick={handleAddToCart}
-                  className="rounded-none bg-black text-white hover:bg-black/90"
-                >
-                  Agregar al carrito
-                </Button>
               </div>
             </div>
           </div>
         </div>
       </div>
-
       <Footer />
 
       {/* Elemento de animación */}

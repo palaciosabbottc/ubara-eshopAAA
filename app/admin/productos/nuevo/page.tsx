@@ -14,8 +14,8 @@ import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent } from "@/components/ui/card"
-import { ArrowLeft, Upload } from "lucide-react"
-import { uploadImage } from "@/lib/storage"
+import { ArrowLeft, Upload, Trash2, Plus } from "lucide-react"
+import { uploadImage, deleteImage } from "@/lib/storage"
 
 export default function AdminNewProductPage() {
   const { addProduct } = useAdmin()
@@ -26,7 +26,7 @@ export default function AdminNewProductPage() {
     description: "",
     price: "",
     category: "",
-    images: ["/placeholder.svg?height=400&width=400"],
+    images: [] as string[],
     stock: "0",
     featured: false,
   })
@@ -125,30 +125,53 @@ export default function AdminNewProductPage() {
 
   // Replace the simulated image upload with real upload
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
+    const files = Array.from(e.target.files || [])
+    if (files.length === 0) return
 
-    if (file.size > 2 * 1024 * 1024) {
-      alert("La imagen no debe superar los 2MB")
+    // Check if adding new images would exceed the limit
+    if (formData.images.length + files.length > 5) {
+      alert("No puedes subir más de 5 imágenes por producto")
       return
     }
 
-    if (!file.type.startsWith("image/")) {
-      alert("Por favor selecciona una imagen válida")
-      return
-    }
-
-    try {
-      const imageUrl = await uploadImage(file, "products")
-      if (imageUrl) {
-        setFormData((prev) => ({
-          ...prev,
-          images: [imageUrl],
-        }))
+    for (const file of files) {
+      if (file.size > 2 * 1024 * 1024) {
+        alert(`La imagen ${file.name} supera los 2MB`)
+        continue
       }
+
+      if (!file.type.startsWith("image/")) {
+        alert(`El archivo ${file.name} no es una imagen válida`)
+        continue
+      }
+
+      try {
+        const imageUrl = await uploadImage(file, "products")
+        if (imageUrl) {
+          setFormData((prev) => ({
+            ...prev,
+            images: [...prev.images, imageUrl],
+          }))
+        }
+      } catch (error) {
+        console.error("Error uploading image:", error)
+        alert(`Error al subir la imagen ${file.name}. Por favor intenta de nuevo.`)
+      }
+    }
+  }
+
+  const handleRemoveImage = async (imageUrl: string, index: number) => {
+    try {
+      if (!imageUrl.includes("placeholder")) {
+        await deleteImage(imageUrl)
+      }
+      setFormData((prev) => ({
+        ...prev,
+        images: prev.images.filter((_, i) => i !== index),
+      }))
     } catch (error) {
-      console.error("Error uploading image:", error)
-      alert("Error al subir la imagen. Por favor intenta de nuevo.")
+      console.error("Error removing image:", error)
+      alert("Error al eliminar la imagen. Por favor intenta de nuevo.")
     }
   }
 
@@ -253,28 +276,48 @@ export default function AdminNewProductPage() {
             <div>
               <Card>
                 <CardContent className="p-6">
-                  <Label>Imagen del producto</Label>
+                  <Label>Imágenes del producto</Label>
                   <div className="mt-2 flex flex-col items-center">
-                    <div className="relative w-full h-48 mb-4 bg-gray-100 rounded-md overflow-hidden">
-                      <Image
-                        src={formData.images[0] || "/placeholder.svg"}
-                        alt="Vista previa"
-                        fill
-                        className="object-contain"
-                      />
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 w-full mb-4">
+                      {formData.images.map((image, index) => (
+                        <div key={index} className="relative aspect-square bg-gray-100 rounded-md overflow-hidden">
+                          <Image
+                            src={image}
+                            alt={`Imagen ${index + 1}`}
+                            fill
+                            className="object-cover"
+                          />
+                          <Button
+                            type="button"
+                            variant="destructive"
+                            size="icon"
+                            className="absolute top-2 right-2 h-6 w-6"
+                            onClick={() => handleRemoveImage(image, index)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      ))}
+                      {formData.images.length < 5 && (
+                        <div
+                          className="aspect-square bg-gray-100 rounded-md flex items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors"
+                          onClick={() => document.getElementById("imageInput")?.click()}
+                        >
+                          <Plus className="h-8 w-8 text-gray-400" />
+                        </div>
+                      )}
                     </div>
-                    <Button type="button" variant="outline" onClick={() => document.getElementById("imageInput")?.click()} className="w-full">
-                      <Upload className="h-4 w-4 mr-2" />
-                      Subir imagen
-                    </Button>
                     <input
                       id="imageInput"
                       type="file"
                       accept="image/*"
+                      multiple
                       onChange={handleImageUpload}
                       className="hidden"
                     />
-                    <p className="text-xs text-gray-500 mt-2">Formatos recomendados: JPG, PNG. Tamaño máximo: 2MB</p>
+                    <p className="text-xs text-gray-500 mt-2">
+                      Formatos recomendados: JPG, PNG. Tamaño máximo: 2MB por imagen. Máximo 5 imágenes.
+                    </p>
                   </div>
                 </CardContent>
               </Card>

@@ -24,6 +24,7 @@ export function ProductGrid({ category, limit, products: initialProducts, showAd
   const { addToCart } = useCart()
   const [quantities, setQuantities] = useState<Record<string, number>>({})
   const [activeProductId, setActiveProductId] = useState<string | null>(null)
+  const [currentImages, setCurrentImages] = useState<Record<string, number>>({})
   const addToCartButtonRef = useRef<HTMLButtonElement>(null)
   const [products, setProducts] = useState<Product[]>(initialProducts || [])
   const [loading, setLoading] = useState(!initialProducts)
@@ -83,6 +84,19 @@ export function ProductGrid({ category, limit, products: initialProducts, showAd
     }))
   }
 
+  const getCurrentImage = (productId: string, images: string[]) => {
+    return images[currentImages[productId] || 0] || "/placeholder.svg"
+  }
+
+  const nextImage = (e: React.MouseEvent, productId: string, images: string[]) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setCurrentImages(prev => ({
+      ...prev,
+      [productId]: ((prev[productId] || 0) + 1) % images.length
+    }))
+  }
+
   const handleAddToCart = (product: Product, event: React.MouseEvent) => {
     const quantity = getQuantity(product.id)
 
@@ -123,11 +137,21 @@ export function ProductGrid({ category, limit, products: initialProducts, showAd
             <Link href={`/producto/${product.id}`} className="block">
               <div className="aspect-square relative overflow-hidden mb-3">
                 <Image
-                  src={product.images[0] || "/placeholder.svg"}
+                  src={getCurrentImage(product.id, product.images)}
                   alt={product.name}
                   fill
                   className="object-cover group-hover:scale-105 transition-transform duration-300"
                 />
+                {product.images.length > 1 && (
+                  <button
+                    onClick={(e) => nextImage(e, product.id, product.images)}
+                    className="absolute bottom-2 right-2 bg-white/80 hover:bg-white rounded-full p-1.5 transition-colors"
+                  >
+                    <div className="text-xs font-medium">
+                      {(currentImages[product.id] || 0) + 1}/{product.images.length}
+                    </div>
+                  </button>
+                )}
               </div>
               <h3 className="text-sm font-medium">{product.name}</h3>
               <p className="text-sm text-muted-foreground">{formatPrice(product.price)}</p>

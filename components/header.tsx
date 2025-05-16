@@ -24,22 +24,31 @@ export function Header() {
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY
+      const isHomePage = pathname === "/"
 
-      // Aumentamos el umbral de 200px a 400px para mantener la transparencia por más tiempo
-      const isScrolled = currentScrollY > 400
+      // Umbral de scroll diferente para la página de inicio
+      const scrollThreshold = isHomePage ? 400 : 100
+      const isScrolled = currentScrollY > scrollThreshold
 
       // Determinar si debemos ocultar la navbar
-      // Solo ocultamos si:
-      // 1. No estamos en la parte superior de la página
-      // 2. Estamos haciendo scroll hacia abajo
-      const shouldHide = currentScrollY > 500 && currentScrollY > lastScrollY
+      const shouldHide = currentScrollY > 100 && currentScrollY > lastScrollY
 
       setScrolled(isScrolled)
 
       // Solo actualizamos el estado hidden si showNavbar es false
       // Si showNavbar es true, siempre mantenemos la barra visible
       if (!showNavbar) {
-        setHidden(shouldHide)
+        // En la página de inicio, aplicamos un retraso
+        if (isHomePage) {
+          if (shouldHide && currentScrollY > 400) {
+            setHidden(true)
+          } else {
+            setHidden(false)
+          }
+        } else {
+          // En otras páginas, ocultamos inmediatamente
+          setHidden(shouldHide)
+        }
       } else {
         setHidden(false)
       }
@@ -51,7 +60,7 @@ export function Header() {
     return () => {
       window.removeEventListener("scroll", handleScroll)
     }
-  }, [lastScrollY, showNavbar])
+  }, [lastScrollY, showNavbar, pathname])
 
   // Efecto para sincronizar el estado hidden con showNavbar
   useEffect(() => {
@@ -63,15 +72,16 @@ export function Header() {
   // Efecto para resetear showNavbar cuando el usuario hace scroll
   useEffect(() => {
     const handleScroll = () => {
-      // Después de un tiempo sin interacción, permitimos que la barra se oculte nuevamente
+      const isHomePage = pathname === "/"
+      // En la página de inicio, esperamos más tiempo antes de permitir que la barra se oculte
+      const timeout = isHomePage ? 1000 : 300
       setShowNavbar(false)
     }
 
-    // Añadimos un debounce para no resetear showNavbar en cada evento de scroll
     let timeout: NodeJS.Timeout
     const debouncedHandleScroll = () => {
       clearTimeout(timeout)
-      timeout = setTimeout(handleScroll, 1000)
+      timeout = setTimeout(handleScroll, pathname === "/" ? 1000 : 300)
     }
 
     window.addEventListener("scroll", debouncedHandleScroll, { passive: true })
@@ -79,7 +89,7 @@ export function Header() {
       window.removeEventListener("scroll", debouncedHandleScroll)
       clearTimeout(timeout)
     }
-  }, [setShowNavbar])
+  }, [setShowNavbar, pathname])
 
   const totalItems = cart.reduce((total, item) => total + item.quantity, 0)
 

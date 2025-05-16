@@ -72,12 +72,17 @@ export default function Home() {
 
       <div className="flex-1">
         {/* Featured Products Section */}
-        <section className="w-full py-12 bg-white">
+        <section className="w-full py-24 bg-white">
           <div className="container px-4 md:px-6">
-            <div className="max-w-5xl mx-auto text-center mb-10">
-              <p className="text-lg mb-8">
-                Ubara es el arte de la búsqueda de la belleza en lo imperfecto, donde lo natural...
+            <div className="max-w-2xl mx-auto text-center mb-24">
+            <p className="text-base text-gray-600">
+                ubara es el arte de la búsqueda de la
+                <br />
+                belleza en la imperfección
+                <br />
+                ubara es wabi-sabi  
               </p>
+              <div className="w-48 h-px bg-gray-300 mx-auto mt-6"></div>
             </div>
 
             <div className="max-w-5xl mx-auto">
@@ -92,10 +97,29 @@ export default function Home() {
         {/* Brand Story Section */}
         <section className="w-full py-12 bg-white">
           <div className="container px-4 md:px-6">
-            <div className="max-w-5xl mx-auto text-center">
-              <p className="text-lg mb-8">
-                Cada pieza es única, hecha a mano con amor y dedicación, reflejando la belleza de la imperfección natural.
-              </p>
+            <div className="max-w-5xl mx-auto">
+              <div className="grid md:grid-cols-2 gap-12 items-center">
+                <div className="relative aspect-[4/3] overflow-hidden">
+                  <Image
+                    src="/placeholder.svg?height=400&width=500&text=Historia"
+                    alt="Nuestra Historia"
+                    width={500}
+                    height={400}
+                    className="w-full h-auto object-cover"
+                  />
+                </div>
+                <div className="max-w-xl">
+                  <p className="text-base text-gray-600 mb-8">
+                    Lo que comenzó como un hobby y una forma de pasar el tiempo, se convirtió en una verdadera pasión.
+                  </p>
+                  <Link href="/nosotros" className="inline-block">
+                    <h2 className="text-base font-normal hover:opacity-70 transition-opacity">
+                      nuestra historia
+                      <div className="w-48 h-px bg-black mt-2"></div>
+                    </h2>
+                  </Link>
+                </div>
+              </div>
             </div>
           </div>
         </section>
