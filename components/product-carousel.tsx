@@ -1,14 +1,15 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import useEmblaCarousel from "embla-carousel-react"
 import Autoplay from "embla-carousel-autoplay"
-import { ChevronLeft, ChevronRight } from "lucide-react"
+import { ChevronLeft, ChevronRight, ShoppingBag } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Plus, Minus } from "lucide-react"
 import { useCart } from "@/components/cart-provider"
+import { useCartAnimation } from "@/hooks/use-cart-animation"
 import { formatPrice } from "@/lib/format"
 import type { Product } from "@/lib/types"
 import styles from "@/styles/product-carousel.module.css"
@@ -27,6 +28,14 @@ export function ProductCarousel({
   const { addToCart } = useCart()
   const [quantities, setQuantities] = useState<Record<string, number>>({})
   const [currentImages, setCurrentImages] = useState<Record<string, number>>({})
+  const [activeProductId, setActiveProductId] = useState<string | null>(null)
+  const addToCartButtonRefs = useRef<Record<string, HTMLButtonElement | null>>({})
+
+  const { animating, showOverlay, overlayPosition, startAnimation } = useCartAnimation({
+    buttonRef: {
+      current: activeProductId ? addToCartButtonRefs.current[activeProductId] : null
+    } as React.RefObject<HTMLButtonElement>
+  })
 
   const [emblaRef, emblaApi] = useEmblaCarousel(
     {
@@ -95,7 +104,7 @@ export function ProductCarousel({
     }))
   }
 
-  const handleAddToCart = (product: Product) => {
+  const handleAddToCart = (product: Product, event: React.MouseEvent) => {
     const quantity = getQuantity(product.id)
     addToCart({
       id: product.id,
@@ -104,6 +113,11 @@ export function ProductCarousel({
       image: product.images[0] || "/placeholder.svg",
       quantity,
     })
+
+    setActiveProductId(product.id)
+
+    startAnimation()
+
     setQuantities((prev) => ({
       ...prev,
       [product.id]: 1,
@@ -170,12 +184,17 @@ export function ProductCarousel({
                           </Button>
                         </div>
                         <Button
+                          ref={(el) => {
+                            if (el) {
+                              addToCartButtonRefs.current[product.id] = el
+                            }
+                          }}
                           variant="outline"
                           size="sm"
                           className="rounded-none text-xs"
                           onClick={(e) => {
                             e.preventDefault()
-                            handleAddToCart(product)
+                            handleAddToCart(product, e)
                           }}
                         >
                           Añadir
@@ -207,6 +226,26 @@ export function ProductCarousel({
       >
         <ChevronRight className="h-5 w-5" />
       </button>
+
+      {/* Elemento de animación */}
+      {animating && (
+        <div className="cart-animation">
+          <div className="w-8 h-8 bg-black rounded-full flex items-center justify-center text-white">
+            <ShoppingBag className="h-4 w-4" />
+          </div>
+        </div>
+      )}
+
+      {/* Overlay para guiar la mirada */}
+      <div
+        className={`cart-attention-overlay ${showOverlay ? "active" : ""}`}
+        style={
+          {
+            "--cart-x": overlayPosition.x,
+            "--cart-y": overlayPosition.y,
+          } as React.CSSProperties
+        }
+      ></div>
     </div>
   )
 } 

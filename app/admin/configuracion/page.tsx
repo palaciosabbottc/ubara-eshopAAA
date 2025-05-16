@@ -119,6 +119,9 @@ export default function AdminSettingsPage() {
                       value={storeSettings.store_name}
                       onChange={handleStoreSettingsChange}
                     />
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Se usa en metadatos para SEO, pie de página y título de las páginas
+                    </p>
                   </div>
                   <div>
                     <Label htmlFor="contact_email">Email de contacto</Label>
@@ -129,6 +132,9 @@ export default function AdminSettingsPage() {
                       value={storeSettings.contact_email}
                       onChange={handleStoreSettingsChange}
                     />
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Se muestra en la página de contacto y pie de página
+                    </p>
                   </div>
                 </div>
 
@@ -141,6 +147,9 @@ export default function AdminSettingsPage() {
                     onChange={handleStoreSettingsChange}
                     rows={3}
                   />
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Se utiliza en la página principal y en metadatos para SEO
+                  </p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -152,6 +161,9 @@ export default function AdminSettingsPage() {
                       value={storeSettings.contact_phone}
                       onChange={handleStoreSettingsChange}
                     />
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Se usa para WhatsApp en el carrito y en la página de contacto
+                    </p>
                   </div>
                   <div>
                     <Label htmlFor="address">Dirección</Label>
@@ -161,6 +173,9 @@ export default function AdminSettingsPage() {
                       value={storeSettings.address}
                       onChange={handleStoreSettingsChange}
                     />
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Se muestra en la página de contacto y pie de página
+                    </p>
                   </div>
                 </div>
 
@@ -173,6 +188,9 @@ export default function AdminSettingsPage() {
                     onChange={handleStoreSettingsChange}
                     rows={2}
                   />
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Se muestra en la página de contacto. Usa saltos de línea para formatear el horario
+                  </p>
                 </div>
 
                 <div className="flex justify-end">
@@ -204,6 +222,9 @@ export default function AdminSettingsPage() {
                         className="rounded-l-none"
                       />
                     </div>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Solo el nombre de usuario, sin @ (ejemplo: ubara_cuadros)
+                    </p>
                   </div>
                   <div>
                     <Label htmlFor="facebook">Facebook</Label>
@@ -219,6 +240,9 @@ export default function AdminSettingsPage() {
                         className="rounded-l-none"
                       />
                     </div>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Solo el nombre de usuario o página (ejemplo: ubaracuadros)
+                    </p>
                   </div>
                 </div>
 
@@ -237,6 +261,9 @@ export default function AdminSettingsPage() {
                         className="rounded-l-none"
                       />
                     </div>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Solo el nombre de usuario, sin @ (dejar vacío si no se usa)
+                    </p>
                   </div>
                   <div>
                     <Label htmlFor="pinterest">Pinterest</Label>
@@ -252,6 +279,9 @@ export default function AdminSettingsPage() {
                         className="rounded-l-none"
                       />
                     </div>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Solo el nombre de usuario (dejar vacío si no se usa)
+                    </p>
                   </div>
                 </div>
 

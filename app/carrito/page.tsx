@@ -8,21 +8,25 @@ import { useCart } from "@/components/cart-provider"
 import { Trash2 } from "lucide-react"
 import { formatPrice } from "@/lib/format"
 import { incrementWhatsappClicks } from "@/lib/metrics-supabase"
+import { useSiteConfig } from "@/components/site-config-provider"
 
 export default function CartPage() {
   const { cart, updateQuantity, removeFromCart, clearCart } = useCart()
+  const { config, isLoading } = useSiteConfig()
 
   const subtotal = cart.reduce((total, item) => {
     return total + item.price * item.quantity
   }, 0)
 
   const handleCheckout = async () => {
+    if (isLoading) return
+
     try {
       // Registrar clic en WhatsApp
       await incrementWhatsappClicks()
 
-      // Número de WhatsApp (reemplaza con tu número real)
-      const phoneNumber = "1234567890" // Formato: código de país + número sin símbolos
+      // Get phone number from config and clean it
+      const phoneNumber = config.contact_phone.replace(/\D/g, '')
 
       // Crear el mensaje con la información del pedido
       let message = "¡Hola! Me gustaría realizar el siguiente pedido:\n\n"

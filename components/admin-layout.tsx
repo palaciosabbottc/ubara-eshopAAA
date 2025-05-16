@@ -48,7 +48,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
             <div className="flex flex-col h-0 flex-1 border-r border-gray-200 bg-white">
               <div className="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
                 <div className="flex items-center flex-shrink-0 px-4">
-                  <Link href="/" className="text-xl font-light">
+                  <Link href="/admin" className="text-xl font-light">
                     ubara
                   </Link>
                   <span className="ml-2 text-xs text-gray-500">admin</span>
