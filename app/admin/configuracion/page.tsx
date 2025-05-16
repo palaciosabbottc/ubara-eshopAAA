@@ -8,25 +8,42 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { toast } from "@/components/ui/use-toast"
 import { Toaster } from "@/components/ui/toaster"
+import { useSiteConfig } from "@/components/site-config-provider"
 
 export default function AdminSettingsPage() {
+  const { config, updateConfig, isLoading } = useSiteConfig()
   const [storeSettings, setStoreSettings] = useState({
-    storeName: "Ubara",
-    storeDescription: "Cerámica artesanal",
-    contactEmail: "info@ubara.com",
-    contactPhone: "+1234567890",
-    address: "Calle Principal 123, Ciudad",
+    store_name: "",
+    store_description: "",
+    contact_email: "",
+    contact_phone: "",
+    address: "",
+    business_hours: "",
   })
 
   const [socialMedia, setSocialMedia] = useState({
-    instagram: "ubara_ceramica",
-    facebook: "ubaraceramica",
+    instagram: "",
+    facebook: "",
     twitter: "",
     pinterest: "",
   })
+
+  useEffect(() => {
+    if (!isLoading) {
+      setStoreSettings({
+        store_name: config.store_name,
+        store_description: config.store_description,
+        contact_email: config.contact_email,
+        contact_phone: config.contact_phone,
+        address: config.address,
+        business_hours: config.business_hours,
+      })
+      setSocialMedia(config.social_media)
+    }
+  }, [config, isLoading])
 
   const handleStoreSettingsChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -38,22 +55,46 @@ export default function AdminSettingsPage() {
     setSocialMedia((prev) => ({ ...prev, [name]: value }))
   }
 
-  const handleSaveSettings = () => {
-    // In a real app, this would save to a database
-    localStorage.setItem("ubara-store-settings", JSON.stringify(storeSettings))
+  const handleSaveSettings = async () => {
+    const success = await updateConfig(storeSettings)
+    if (success) {
     toast({
       title: "Configuración guardada",
       description: "Los cambios han sido guardados correctamente.",
     })
+    } else {
+      toast({
+        title: "Error",
+        description: "No se pudieron guardar los cambios. Por favor intenta de nuevo.",
+        variant: "destructive",
+      })
+    }
   }
 
-  const handleSaveSocialMedia = () => {
-    // In a real app, this would save to a database
-    localStorage.setItem("ubara-social-media", JSON.stringify(socialMedia))
+  const handleSaveSocialMedia = async () => {
+    const success = await updateConfig({ social_media: socialMedia })
+    if (success) {
     toast({
       title: "Redes sociales actualizadas",
       description: "Los cambios han sido guardados correctamente.",
     })
+    } else {
+      toast({
+        title: "Error",
+        description: "No se pudieron guardar los cambios. Por favor intenta de nuevo.",
+        variant: "destructive",
+      })
+    }
+  }
+
+  if (isLoading) {
+    return (
+      <AdminLayout>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
+          <h1 className="text-2xl font-semibold text-gray-900 mb-6">Cargando configuración...</h1>
+        </div>
+      </AdminLayout>
+    )
   }
 
   return (
@@ -71,32 +112,32 @@ export default function AdminSettingsPage() {
               <div className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="storeName">Nombre de la tienda</Label>
+                    <Label htmlFor="store_name">Nombre de la tienda</Label>
                     <Input
-                      id="storeName"
-                      name="storeName"
-                      value={storeSettings.storeName}
+                      id="store_name"
+                      name="store_name"
+                      value={storeSettings.store_name}
                       onChange={handleStoreSettingsChange}
                     />
                   </div>
                   <div>
-                    <Label htmlFor="contactEmail">Email de contacto</Label>
+                    <Label htmlFor="contact_email">Email de contacto</Label>
                     <Input
-                      id="contactEmail"
-                      name="contactEmail"
+                      id="contact_email"
+                      name="contact_email"
                       type="email"
-                      value={storeSettings.contactEmail}
+                      value={storeSettings.contact_email}
                       onChange={handleStoreSettingsChange}
                     />
                   </div>
                 </div>
 
                 <div>
-                  <Label htmlFor="storeDescription">Descripción de la tienda</Label>
+                  <Label htmlFor="store_description">Descripción de la tienda</Label>
                   <Textarea
-                    id="storeDescription"
-                    name="storeDescription"
-                    value={storeSettings.storeDescription}
+                    id="store_description"
+                    name="store_description"
+                    value={storeSettings.store_description}
                     onChange={handleStoreSettingsChange}
                     rows={3}
                   />
@@ -104,11 +145,11 @@ export default function AdminSettingsPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="contactPhone">Teléfono de contacto</Label>
+                    <Label htmlFor="contact_phone">Teléfono de contacto</Label>
                     <Input
-                      id="contactPhone"
-                      name="contactPhone"
-                      value={storeSettings.contactPhone}
+                      id="contact_phone"
+                      name="contact_phone"
+                      value={storeSettings.contact_phone}
                       onChange={handleStoreSettingsChange}
                     />
                   </div>
@@ -121,6 +162,17 @@ export default function AdminSettingsPage() {
                       onChange={handleStoreSettingsChange}
                     />
                   </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="business_hours">Horario de atención</Label>
+                  <Textarea
+                    id="business_hours"
+                    name="business_hours"
+                    value={storeSettings.business_hours}
+                    onChange={handleStoreSettingsChange}
+                    rows={2}
+                  />
                 </div>
 
                 <div className="flex justify-end">

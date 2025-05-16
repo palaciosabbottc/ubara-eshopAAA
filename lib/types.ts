@@ -18,4 +18,22 @@ export interface Collection {
   product_ids: string[]
   created_at?: string
   updated_at?: string
+}
+
+export interface SiteConfig {
+  id?: string
+  store_name: string
+  store_description: string
+  contact_email: string
+  contact_phone: string
+  address: string
+  business_hours: string
+  social_media: {
+    instagram: string
+    facebook: string
+    twitter: string
+    pinterest: string
+  }
+  created_at?: string
+  updated_at?: string
 } 

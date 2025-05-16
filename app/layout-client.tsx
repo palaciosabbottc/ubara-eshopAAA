@@ -5,6 +5,7 @@ import { CartProvider } from "@/components/cart-provider"
 import { ThemeProvider } from "@/components/theme-provider"
 import { AdminProvider } from "@/components/admin-provider"
 import { CartIconProvider } from "@/components/cart-icon-context"
+import { SiteConfigProvider } from "@/components/site-config-provider"
 import Script from "next/script"
 import { Toaster } from "@/components/ui/toaster"
 
@@ -13,45 +14,27 @@ export function LayoutClient({ children }: { children: React.ReactNode }) {
     <>
       <ThemeProvider attribute="class" defaultTheme="light">
         <AdminProvider>
-          <CartProvider>
-            <CartIconProvider>{children}</CartIconProvider>
-            <Toaster />
-          </CartProvider>
+          <SiteConfigProvider>
+            <CartProvider>
+              <CartIconProvider>{children}</CartIconProvider>
+              <Toaster />
+            </CartProvider>
+          </SiteConfigProvider>
         </AdminProvider>
       </ThemeProvider>
 
       {/* Script for parallax effect */}
-      <Script id="parallax-effect">
+      <Script id="parallax-script">
         {`
-          document.addEventListener('DOMContentLoaded', () => {
-            const updateParallax = () => {
-              const elements = document.querySelectorAll('[data-parallax]');
-              
-              elements.forEach(element => {
-                const speed = parseFloat(element.getAttribute('data-parallax') || '0');
-                const rect = element.getBoundingClientRect();
-                const viewportHeight = window.innerHeight;
-                
-                // Check if element is in viewport
-                if (rect.top < viewportHeight && rect.bottom > 0) {
-                  const scrolled = window.pageYOffset;
-                  const parallaxDist = scrolled * speed;
-                  const skewAngle = (parallaxDist * 0.025) % 360;
-                  
-                  element.style.transform = \`translate3d(0, \${parallaxDist}px, 0)\`;
-                }
-              });
-            }
-            
-            // Initial update
-            updateParallax();
-            
-            // Update on scroll
-            window.addEventListener('scroll', updateParallax);
-            
-            // Update on resize
-            window.addEventListener('resize', updateParallax);
-          });
+          document.addEventListener('mousemove', (e) => {
+            document.querySelectorAll("[data-parallax]").forEach((shift) => {
+              const position = shift.getAttribute("data-parallax")
+              const x = (window.innerWidth - e.pageX * position) / 90
+              const y = (window.innerHeight - e.pageY * position) / 90
+
+              shift.style.transform = \`translateX(\${x}px) translateY(\${y}px)\`
+            })
+          })
         `}
       </Script>
 

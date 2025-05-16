@@ -12,9 +12,11 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent } from "@/components/ui/card"
 import { toast } from "@/components/ui/use-toast"
 import { Toaster } from "@/components/ui/toaster"
-import { Mail, Phone, MapPin, Clock, Send } from "lucide-react"
+import { Mail, Phone, MapPin, Clock, Send, MessageCircle } from "lucide-react"
+import { useSiteConfig } from "@/components/site-config-provider"
 
 export default function ContactoPage() {
+  const { config, isLoading } = useSiteConfig()
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -49,6 +51,16 @@ export default function ContactoPage() {
     }, 1500)
   }
 
+  const handleWhatsAppClick = () => {
+    // Remove any non-numeric characters from phone number
+    const cleanPhone = config.contact_phone.replace(/\D/g, '')
+    window.open(`https://wa.me/${cleanPhone}`, '_blank')
+  }
+
+  if (isLoading) {
+    return null
+  }
+
   return (
     <main className="min-h-screen flex flex-col">
       <Header />
@@ -70,7 +82,7 @@ export default function ContactoPage() {
                         <Mail className="h-5 w-5 mr-3 text-muted-foreground" />
                         <div>
                           <h3 className="text-sm font-medium">Email</h3>
-                          <p className="text-sm text-muted-foreground">info@ubara.com</p>
+                          <p className="text-sm text-muted-foreground">{config.contact_email}</p>
                         </div>
                       </div>
 
@@ -78,7 +90,7 @@ export default function ContactoPage() {
                         <Phone className="h-5 w-5 mr-3 text-muted-foreground" />
                         <div>
                           <h3 className="text-sm font-medium">Teléfono</h3>
-                          <p className="text-sm text-muted-foreground">+56 9 1234 5678</p>
+                          <p className="text-sm text-muted-foreground">{config.contact_phone}</p>
                         </div>
                       </div>
 
@@ -86,11 +98,7 @@ export default function ContactoPage() {
                         <MapPin className="h-5 w-5 mr-3 text-muted-foreground" />
                         <div>
                           <h3 className="text-sm font-medium">Dirección</h3>
-                          <p className="text-sm text-muted-foreground">
-                            Av. Italia 1234, Providencia
-                            <br />
-                            Santiago, Chile
-                          </p>
+                          <p className="text-sm text-muted-foreground">{config.address}</p>
                         </div>
                       </div>
 
@@ -98,10 +106,8 @@ export default function ContactoPage() {
                         <Clock className="h-5 w-5 mr-3 text-muted-foreground" />
                         <div>
                           <h3 className="text-sm font-medium">Horario</h3>
-                          <p className="text-sm text-muted-foreground">
-                            Lunes a Viernes: 10:00 - 19:00
-                            <br />
-                            Sábado: 11:00 - 16:00
+                          <p className="text-sm text-muted-foreground whitespace-pre-line">
+                            {config.business_hours?.replace(/\\n/g, '\n')}
                           </p>
                         </div>
                       </div>
@@ -114,64 +120,23 @@ export default function ContactoPage() {
               <div className="md:col-span-2">
                 <Card>
                   <CardContent className="p-6">
-                    <h2 className="text-lg font-medium mb-6">Envíanos un mensaje</h2>
-
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <Label htmlFor="name">Nombre</Label>
-                          <Input id="name" name="name" value={formData.name} onChange={handleChange} required />
-                        </div>
-                        <div>
-                          <Label htmlFor="email">Email</Label>
-                          <Input
-                            id="email"
-                            name="email"
-                            type="email"
-                            value={formData.email}
-                            onChange={handleChange}
-                            required
-                          />
-                        </div>
-                      </div>
-
-                      <div>
-                        <Label htmlFor="subject">Asunto</Label>
-                        <Input id="subject" name="subject" value={formData.subject} onChange={handleChange} required />
-                      </div>
-
-                      <div>
-                        <Label htmlFor="message">Mensaje</Label>
-                        <Textarea
-                          id="message"
-                          name="message"
-                          rows={5}
-                          value={formData.message}
-                          onChange={handleChange}
-                          required
-                        />
-                      </div>
-
+                    <div className="flex items-center justify-between mb-6">
+                      <h2 className="text-lg font-medium">Envíanos un mensaje</h2>
                       <Button
-                        type="submit"
-                        disabled={isSubmitting}
-                        className="w-full rounded-none bg-black text-white hover:bg-black/90"
+                        onClick={handleWhatsAppClick}
+                        variant="outline"
+                        className="flex items-center gap-2"
                       >
-                        {isSubmitting ? (
-                          "Enviando..."
-                        ) : (
-                          <>
-                            <Send className="h-4 w-4 mr-2" /> Enviar mensaje
-                          </>
-                        )}
+                        <MessageCircle className="h-4 w-4" />
+                        WhatsApp
                       </Button>
-                    </form>
+                    </div>
                   </CardContent>
                 </Card>
               </div>
             </div>
 
-            {/* Mapa */}
+            {/* Mapa - Comentado para uso futuro
             <div className="mt-12">
               <h2 className="text-lg font-medium mb-4">Ubicación</h2>
               <div className="aspect-video w-full bg-gray-100 relative">
@@ -186,6 +151,7 @@ export default function ContactoPage() {
                 ></iframe>
               </div>
             </div>
+            */}
           </div>
         </div>
       </div>
