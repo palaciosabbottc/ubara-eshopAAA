@@ -1,12 +1,9 @@
 // Server imports
 import type { Metadata } from "next"
-import { Inter } from "next/font/google"
 import "./globals.css"
+import "./fonts.css"
 import { LayoutClient } from "./layout-client"
 import { createClient } from "@/utils/supabase/server"
-
-// Define the Inter font with Latin subset
-const inter = Inter({ subsets: ["latin"] })
 
 // Function to fetch metadata from the database
 async function getMetadata() {
@@ -22,9 +19,6 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: store_name,
     description: store_description,
-    //icons: {
-    //  icon: "/favicon.ico",
-    //},
   }
 }
 
@@ -36,7 +30,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es" suppressHydrationWarning>
-      <body className={inter.className} suppressHydrationWarning>
+      <body suppressHydrationWarning>
         <LayoutClient>{children}</LayoutClient>
       </body>
     </html>
