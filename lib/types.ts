@@ -7,6 +7,7 @@ export interface Product {
   category: string
   stock: number
   featured?: boolean
+  display_order?: number
   created_at?: string
   updated_at?: string
 }
@@ -17,6 +18,7 @@ export interface Collection {
   description: string
   image: string
   product_ids: string[]
+  display_order?: number
   created_at?: string
   updated_at?: string
 }

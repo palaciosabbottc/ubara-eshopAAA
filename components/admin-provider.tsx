@@ -15,12 +15,14 @@ interface AdminContextType {
   addProduct: (product: Omit<Product, "id" | "created_at" | "updated_at">) => Promise<void>
   updateProduct: (id: string, product: Partial<Omit<Product, "id" | "created_at" | "updated_at">>) => Promise<void>
   deleteProduct: (id: string) => Promise<void>
+  loadProducts: () => Promise<void>
 
   // Collections
   collections: Collection[]
   addCollection: (collection: Omit<Collection, "id" | "created_at" | "updated_at">) => Promise<void>
   updateCollection: (id: string, collection: Partial<Omit<Collection, "id" | "created_at" | "updated_at">>) => Promise<void>
   deleteCollection: (id: string) => Promise<void>
+  loadCollections: () => Promise<void>
 }
 
 const AdminContext = createContext<AdminContextType | undefined>(undefined)
@@ -57,6 +59,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     const { data, error } = await supabase
       .from('products')
       .select('*')
+      .order('display_order', { ascending: true })
       .order('created_at', { ascending: false })
     
     if (error) {
@@ -72,6 +75,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     const { data, error } = await supabase
       .from('collections')
       .select('*')
+      .order('display_order', { ascending: true })
       .order('created_at', { ascending: false })
     
     if (error) {
@@ -109,9 +113,19 @@ export function AdminProvider({ children }: { children: ReactNode }) {
 
   // Product functions
   const addProduct = async (product: Omit<Product, "id" | "created_at" | "updated_at">) => {
+    // Get the current highest display_order
+    const { data: maxOrderData } = await supabase
+      .from('products')
+      .select('display_order')
+      .order('display_order', { ascending: false })
+      .limit(1)
+      .single()
+
+    const nextOrder = (maxOrderData?.display_order ?? -1) + 1
+
     const { data, error } = await supabase
       .from('products')
-      .insert([product])
+      .insert([{ ...product, display_order: nextOrder }])
       .select()
       .single()
 
@@ -153,9 +167,19 @@ export function AdminProvider({ children }: { children: ReactNode }) {
 
   // Collection functions
   const addCollection = async (collection: Omit<Collection, "id" | "created_at" | "updated_at">) => {
+    // Get the current highest display_order
+    const { data: maxOrderData } = await supabase
+      .from('collections')
+      .select('display_order')
+      .order('display_order', { ascending: false })
+      .limit(1)
+      .single()
+
+    const nextOrder = (maxOrderData?.display_order ?? -1) + 1
+
     const { data, error } = await supabase
       .from('collections')
-      .insert([collection])
+      .insert([{ ...collection, display_order: nextOrder }])
       .select()
       .single()
 
@@ -205,10 +229,12 @@ export function AdminProvider({ children }: { children: ReactNode }) {
         addProduct,
         updateProduct,
         deleteProduct,
+        loadProducts,
         collections,
         addCollection,
         updateCollection,
         deleteCollection,
+        loadCollections,
       }}
     >
       {children}

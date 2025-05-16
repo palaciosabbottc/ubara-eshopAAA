@@ -24,6 +24,7 @@ export default function Home() {
     const { data, error } = await supabase
       .from('collections')
       .select('*')
+      .order('display_order', { ascending: true })
       .order('created_at', { ascending: false })
       .limit(3)
 
@@ -41,6 +42,7 @@ export default function Home() {
       .from('products')
       .select('*')
       .eq('featured', true)
+      .order('display_order', { ascending: true })
       .order('created_at', { ascending: false })
       .limit(8)
 
