@@ -14,10 +14,19 @@ export default function Home() {
   const [collections, setCollections] = useState<Collection[]>([])
   const [loading, setLoading] = useState(true)
   const [products, setProducts] = useState<Product[]>([])
+  const [showHeroText, setShowHeroText] = useState(false)
 
   useEffect(() => {
     loadCollections()
     loadFeaturedProducts()
+    // Mostrar textos del hero después de 2 segundos o al hacer scroll
+    const timer = setTimeout(() => setShowHeroText(true), 2000)
+    const handleScroll = () => setShowHeroText(true)
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => {
+      clearTimeout(timer)
+      window.removeEventListener('scroll', handleScroll)
+    }
   }, [])
 
   const loadCollections = async () => {
@@ -58,29 +67,35 @@ export default function Home() {
     <main className="min-h-screen flex flex-col">
       {/* Hero Section */}
       <section className="w-full h-screen relative">
-        {/* Background Image */}
-        <div className="absolute inset-0">
-          <Image
-            src="/images/hero-new.png"
-            alt="Cuadros Ubara"
-            fill
-            className="object-cover"
-            priority
-            sizes="100vw"
+        {/* Background Video */}
+        <div className="absolute inset-0 z-0">
+          <video
+            src="https://res.cloudinary.com/dkrveiujc/video/upload/v1747683094/kmyjjqokdpjxvus1z5lm.mp4"
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="w-full h-full object-cover"
           />
+          
         </div>
 
         {/* Header */}
         <Header />
 
         {/* Hero Content */}
-        <div className="relative h-full flex items-center justify-center">
-          <div className="text-center">
+        <div className="relative h-full flex items-center justify-center z-10">
+          <div
+            className={`text-center transition-all duration-[2500ms] ease-out
+              ${showHeroText ? 'opacity-100 blur-0' : 'opacity-0 blur-sm'}
+            `}
+            style={{ textShadow: '0 2px 16px rgba(0,0,0,0.7)' }}
+          >
             <div className="mb-4">
               <h1 className="text-xl font-normal mb-0">nueva</h1>
               <h1 className="text-xl font-normal">colección</h1>
             </div>
-            <p className="text-sm text-muted-foreground mb-4">cuadros</p>
+            <p className="text-sm text-gray-800 mb-4">cuadros texturizados</p>
             <Link href="/tienda">
               <span className="inline-block font-bold text-black hover:opacity-70 transition-opacity border-b border-black pb-1">
                 shop

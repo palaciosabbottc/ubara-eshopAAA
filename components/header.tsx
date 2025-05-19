@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { usePathname } from "next/navigation"
 import { Menu, Search, ShoppingBag } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -135,8 +136,15 @@ export function Header() {
           </div>
           {/* Logo centrado absolutamente */}
           <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
-            <Link href="/" className="text-lg font-bold text-[#8B4513]">
-              ubara
+            <Link href="/">
+              <Image
+                src="/images/ubara-logo.webp"
+                alt="Ubara logo"
+                width={180}
+                height={48}
+                className="object-contain h-12 w-auto"
+                priority
+              />
             </Link>
           </div>
           {/* Menú derecho */}
