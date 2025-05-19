@@ -139,13 +139,13 @@ export default function Home() {
           <div className="container px-4 md:px-6">
             <div className="max-w-5xl mx-auto">
               <div className="grid md:grid-cols-2 gap-12 items-center">
-                <div className="relative aspect-[4/3] overflow-hidden">
+                <div className="flex justify-center items-center h-80 bg-white">
                   <Image
-                    src="/placeholder.svg?height=400&width=500&text=Historia"
-                    alt="Nuestra Historia"
-                    width={500}
-                    height={400}
-                    className="w-full h-auto object-cover"
+                    src="/images/etiqueta.webp"
+                    alt="Etiqueta Ubara"
+                    width={250}
+                    height={200}
+                    className="object-contain"
                   />
                 </div>
                 <div className="max-w-xl">
