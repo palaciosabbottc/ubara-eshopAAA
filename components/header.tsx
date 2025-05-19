@@ -110,24 +110,24 @@ export function Header() {
           <Button
             variant="ghost"
             size="icon"
-            className="md:hidden mr-2 bg-transparent hover:bg-transparent h-7 w-7"
+            className="md:hidden mr-2 bg-transparent hover:bg-transparent h-9 w-9"
             onClick={() => setMobileMenuOpen(true)}
           >
-            <Menu className={cn("h-4 w-4", scrolled ? "text-black" : "text-black")} />
+            <Menu className={cn("h-6 w-6", scrolled ? "text-black" : "text-black")} />
             <span className="sr-only">Toggle menu</span>
           </Button>
           {/* Menú izquierdo */}
-          <div className="hidden md:flex items-center gap-5 text-xs">
+          <div className="hidden md:flex items-center gap-6 text-base">
             <Link
               href="/"
-              className={cn(pathname === "/" ? "font-medium" : "text-muted-foreground", scrolled ? "" : "text-black")}
+              className={cn(pathname === "/" ? "font-semibold" : "text-muted-foreground", scrolled ? "" : "text-black")}
             >
               Inicio
             </Link>
             <Link
               href="/tienda"
               className={cn(
-                pathname.startsWith("/tienda") ? "font-medium" : "text-muted-foreground",
+                pathname.startsWith("/tienda") ? "font-semibold" : "text-muted-foreground",
                 scrolled ? "" : "text-black",
               )}
             >
@@ -148,11 +148,11 @@ export function Header() {
             </Link>
           </div>
           {/* Menú derecho */}
-          <div className="hidden md:flex items-center gap-5 text-xs ml-auto">
+          <div className="hidden md:flex items-center gap-6 text-base ml-auto">
             <Link
               href="/nosotros"
               className={cn(
-                pathname === "/nosotros" ? "font-medium" : "text-muted-foreground",
+                pathname === "/nosotros" ? "font-semibold" : "text-muted-foreground",
                 scrolled ? "" : "text-black",
               )}
             >
@@ -161,7 +161,7 @@ export function Header() {
             <Link
               href="/contacto"
               className={cn(
-                pathname === "/contacto" ? "font-medium" : "text-muted-foreground",
+                pathname === "/contacto" ? "font-semibold" : "text-muted-foreground",
                 scrolled ? "" : "text-black",
               )}
             >
@@ -169,14 +169,14 @@ export function Header() {
             </Link>
           </div>
           {/* Iconos de búsqueda y carrito */}
-          <div className="flex items-center gap-1 ml-auto md:ml-0">
+          <div className="flex items-center gap-2 ml-auto md:ml-0">
             <Button 
               variant="ghost" 
               size="icon" 
-              className="bg-transparent hover:bg-transparent h-7 w-7"
+              className="bg-transparent hover:bg-transparent h-9 w-9"
               onClick={() => setSearchOpen(true)}
             >
-              <Search className={cn("h-3.5 w-3.5", scrolled ? "text-black" : "text-black")} />
+              <Search className={cn("h-6 w-6", scrolled ? "text-black" : "text-black")} />
               <span className="sr-only">Buscar</span>
             </Button>
             <CartSheet>
@@ -186,13 +186,13 @@ export function Header() {
                   variant="ghost"
                   size="icon"
                   className={cn(
-                    "relative bg-transparent hover:bg-transparent h-7 w-7 transition-all",
+                    "relative bg-transparent hover:bg-transparent h-9 w-9 transition-all",
                     isHighlighted && "cart-icon-highlight",
                   )}
                 >
-                  <ShoppingBag className={cn("h-3.5 w-3.5", scrolled ? "text-black" : "text-black")} />
+                  <ShoppingBag className={cn("h-6 w-6", scrolled ? "text-black" : "text-black")} />
                   {totalItems > 0 && (
-                    <span className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-black text-white text-[8px] flex items-center justify-center">
+                    <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-black text-white text-[10px] flex items-center justify-center">
                       {totalItems}
                     </span>
                   )}
